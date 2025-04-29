@@ -53,8 +53,9 @@ func Dial(name string, opts ...DialOption) (*grpc.ClientConn, error) {
 	}
 
 	conn, err := grpc.Dial(name, dialopts...)
+
 	if err != nil {
-		return nil, fmt.Errorf("failed to dial %s: %v", name, err)
+		return nil, fmt.Errorf("failed to connect %s: %v", name, err)
 	}
 
 	return conn, nil

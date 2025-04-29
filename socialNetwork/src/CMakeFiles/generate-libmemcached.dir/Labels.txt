@@ -1,0 +1,13 @@
+# Target labels
+ generate-libmemcached
+# Source files and their labels
+/home/pager/Documents/DeathStarBench/socialNetwork/src/CMakeFiles/generate-libmemcached
+/home/pager/Documents/DeathStarBench/socialNetwork/src/CMakeFiles/generate-libmemcached.rule
+/home/pager/Documents/DeathStarBench/socialNetwork/src/CMakeFiles/generate-libmemcached-complete.rule
+/home/pager/Documents/DeathStarBench/socialNetwork/src/generate-libmemcached-prefix/src/generate-libmemcached-stamp/generate-libmemcached-build.rule
+/home/pager/Documents/DeathStarBench/socialNetwork/src/generate-libmemcached-prefix/src/generate-libmemcached-stamp/generate-libmemcached-configure.rule
+/home/pager/Documents/DeathStarBench/socialNetwork/src/generate-libmemcached-prefix/src/generate-libmemcached-stamp/generate-libmemcached-download.rule
+/home/pager/Documents/DeathStarBench/socialNetwork/src/generate-libmemcached-prefix/src/generate-libmemcached-stamp/generate-libmemcached-install.rule
+/home/pager/Documents/DeathStarBench/socialNetwork/src/generate-libmemcached-prefix/src/generate-libmemcached-stamp/generate-libmemcached-mkdir.rule
+/home/pager/Documents/DeathStarBench/socialNetwork/src/generate-libmemcached-prefix/src/generate-libmemcached-stamp/generate-libmemcached-patch.rule
+/home/pager/Documents/DeathStarBench/socialNetwork/src/generate-libmemcached-prefix/src/generate-libmemcached-stamp/generate-libmemcached-update.rule

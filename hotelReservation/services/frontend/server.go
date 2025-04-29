@@ -178,6 +178,9 @@ func (s *Server) initUserClient(name string) error {
 	if err != nil {
 		return fmt.Errorf("dialer error: %v", err)
 	}
+
+	log.Info().Msg(fmt.Sprintf("%v", conn))
+
 	s.userClient = user.NewUserClient(conn)
 	return nil
 }
@@ -197,9 +200,11 @@ func (s *Server) getGprcConn(name string) (*grpc.ClientConn, error) {
 	log.Info().Msg(fmt.Sprintf("%s.%s", name, s.KnativeDns))
 
 	if s.KnativeDns != "" {
-		return dialer.Dial(
-			fmt.Sprintf("consul://%s/%s.%s", s.ConsulAddr, name, s.KnativeDns),
+		return dialer.Dial(fmt.Sprintf("%s.%s", name, s.KnativeDns),
 			dialer.WithTracer(s.Tracer))
+		// 
+		// return dialer.Dial(fmt.Sprintf("consul://%s/%s.%s", s.ConsulAddr, name, s.KnativeDns),
+		// 	dialer.WithTracer(s.Tracer))
 	} else {
 		return dialer.Dial(
 			fmt.Sprintf("consul://%s/%s", s.ConsulAddr, name),
@@ -357,6 +362,7 @@ func (s *Server) reviewHandler(w http.ResponseWriter, r *http.Request) {
 		Username: username,
 		Password: password,
 	})
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

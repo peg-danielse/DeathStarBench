@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/pager/Documents/DeathStarBench/socialNetwork/src/CMakeFiles/generate-libmemcached"
+		},
+		{
+			"file" : "/home/pager/Documents/DeathStarBench/socialNetwork/src/CMakeFiles/generate-libmemcached.rule"
+		},
+		{
+			"file" : "/home/pager/Documents/DeathStarBench/socialNetwork/src/CMakeFiles/generate-libmemcached-complete.rule"
+		},
+		{
+			"file" : "/home/pager/Documents/DeathStarBench/socialNetwork/src/generate-libmemcached-prefix/src/generate-libmemcached-stamp/generate-libmemcached-build.rule"
+		},
+		{
+			"file" : "/home/pager/Documents/DeathStarBench/socialNetwork/src/generate-libmemcached-prefix/src/generate-libmemcached-stamp/generate-libmemcached-configure.rule"
+		},
+		{
+			"file" : "/home/pager/Documents/DeathStarBench/socialNetwork/src/generate-libmemcached-prefix/src/generate-libmemcached-stamp/generate-libmemcached-download.rule"
+		},
+		{
+			"file" : "/home/pager/Documents/DeathStarBench/socialNetwork/src/generate-libmemcached-prefix/src/generate-libmemcached-stamp/generate-libmemcached-install.rule"
+		},
+		{
+			"file" : "/home/pager/Documents/DeathStarBench/socialNetwork/src/generate-libmemcached-prefix/src/generate-libmemcached-stamp/generate-libmemcached-mkdir.rule"
+		},
+		{
+			"file" : "/home/pager/Documents/DeathStarBench/socialNetwork/src/generate-libmemcached-prefix/src/generate-libmemcached-stamp/generate-libmemcached-patch.rule"
+		},
+		{
+			"file" : "/home/pager/Documents/DeathStarBench/socialNetwork/src/generate-libmemcached-prefix/src/generate-libmemcached-stamp/generate-libmemcached-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"generate-libmemcached"
+		],
+		"name" : "generate-libmemcached"
+	}
+}
