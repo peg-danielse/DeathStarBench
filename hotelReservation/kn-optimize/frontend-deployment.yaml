@@ -28,17 +28,14 @@ spec:
       containers:
         - command:
             - frontend
-          env:
-          - name: DLOG
-            value: DEBUG
           image: pag3r/hotel-reservations:latest
           name: hotel-reserv-frontend
           ports:
             - containerPort: 5000
           resources:
             requests:
-              cpu: 100m
+              cpu: 500m  # Increased from 100m to 500m
             limits:
-              cpu: 1000m
+              cpu: 2000m # Increased from 1000m to 2000m
       restartPolicy: Always
 status: {}

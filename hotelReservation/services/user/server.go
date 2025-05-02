@@ -75,7 +75,7 @@ func (s *Server) Run() error {
 
 	// err = s.Registry.Register(name, s.uuid, s.IpAddr, s.Port)
 
-	err = s.Registry.Register(name, s.uuid, "http://srv-user.default.10.103.165.197.sslip.io", "80")
+	err = s.Registry.Register(name, s.uuid, "http://srv-user.default.10.103.165.197.sslip.io", 80)
 	if err != nil {
 		return fmt.Errorf("failed register: %v", err)
 	}

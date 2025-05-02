@@ -202,7 +202,7 @@ func (s *Server) getGprcConn(name string) (*grpc.ClientConn, error) {
 	if s.KnativeDns != "" {
 		return dialer.Dial(fmt.Sprintf("%s.%s", name, s.KnativeDns),
 			dialer.WithTracer(s.Tracer))
-		// 
+		//
 		// return dialer.Dial(fmt.Sprintf("consul://%s/%s.%s", s.ConsulAddr, name, s.KnativeDns),
 		// 	dialer.WithTracer(s.Tracer))
 	} else {
