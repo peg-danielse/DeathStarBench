@@ -9,20 +9,25 @@ metadata:
     io.kompose.service: consul
   name: consul
 spec:
+  type: NodePort
   ports:
     - name: "8300"
       port: 8300
       targetPort: 8300
+      nodePort: 30300
     - name: "8400"
       port: 8400
       targetPort: 8400
+      nodePort: 30400
     - name: "8500"
       port: 8500
       targetPort: 8500
+      nodePort: 30500
     - name: "8600"
       port: 8600
       protocol: UDP
       targetPort: 53
+      nodePort: 30600
   selector:
     io.kompose.service: consul
 status:
