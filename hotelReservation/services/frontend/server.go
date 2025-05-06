@@ -239,7 +239,7 @@ func (s *Server) searchHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Trace().Msg("starts searchHandler querying downstream")
 
-	log.Trace().Msgf("SEARCH [lat: %v, lon: %v, inDate: %v, outDate: %v", lat, lon, inDate, outDate)
+	log.Info().Msgf("SEARCH [lat: %v, lon: %v, inDate: %v, outDate: %v", lat, lon, inDate, outDate)
 	// search for best hotels
 	searchResp, err := s.searchClient.Nearby(ctx, &search.NearbyRequest{
 		Lat:     lat,
@@ -267,7 +267,7 @@ func (s *Server) searchHandler(w http.ResponseWriter, r *http.Request) {
 
 	reservationResp, err := s.reservationClient.CheckAvailability(ctx, &reservation.Request{
 		CustomerName: "",
-		HotelId:      searchResp.HotelIds,
+		HotelId:      searchResp.HotelIds[:100],
 		InDate:       inDate,
 		OutDate:      outDate,
 		RoomNumber:   1,
