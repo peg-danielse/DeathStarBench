@@ -253,9 +253,11 @@ func (s *Server) searchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Trace().Msg("SearchHandler gets searchResp")
-	//for _, hid := range searchResp.HotelIds {
-	//	log.Trace().Msgf("Search Handler hotelId = %s", hid)
-	//}
+	// for _, hid := range searchResp.HotelIds {
+	// log.Trace().Msgf("Search Handler hotelId = %s", hid)
+	// }
+
+	log.Info().Msgf("search responce %d", len(searchResp.HotelIds))
 
 	// grab locale from query params or default to en
 	locale := r.URL.Query().Get("locale")

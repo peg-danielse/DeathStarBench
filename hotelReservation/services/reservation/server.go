@@ -350,6 +350,7 @@ func (s *Server) CheckAvailability(ctx context.Context, req *pb.Request) (*pb.Re
 				wg.Wait()
 				close(ch)
 			}()
+
 			for command := range queryMap {
 				go func(comm string) {
 					defer wg.Done()
