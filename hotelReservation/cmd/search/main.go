@@ -9,7 +9,6 @@ import (
 
 	"strconv"
 
-	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/registry"
 	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/services/search"
 	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/tracing"
 	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/tune"
@@ -40,7 +39,7 @@ func main() {
 
 	var (
 		jaegerAddr = flag.String("jaegerAddr", result["jaegerAddress"], "Jaeger address")
-		consulAddr = flag.String("consulAddr", result["consulAddress"], "Consul address")
+		// consulAddr = flag.String("consulAddr", result["consulAddress"], "Consul address")
 	)
 	flag.Parse()
 
@@ -51,20 +50,21 @@ func main() {
 	}
 	log.Info().Msg("Jaeger agent initialized")
 
-	log.Info().Msgf("Initializing consul agent [host: %v]...", *consulAddr)
-	registry, err := registry.NewClient(*consulAddr)
-	if err != nil {
-		log.Panic().Msgf("Got error while initializing consul agent: %v", err)
-	}
-	log.Info().Msg("Consul agent initialized")
+	// log.Info().Msgf("Initializing consul agent [host: %v]...", *consulAddr)
+	// registry, err := registry.NewClient(*consulAddr)
+	// if err != nil {
+	// 	log.Panic().Msgf("Got error while initializing consul agent: %v", err)
+	// }
+	// log.Info().Msg("Consul agent initialized")
+	log.Info().Msg("Consul agent skipped")
 
 	srv := &search.Server{
-		Tracer:     tracer,
-		Port:       servPort,
-		IpAddr:     servIP,
-		ConsulAddr: *consulAddr,
+		Tracer: tracer,
+		Port:   servPort,
+		IpAddr: servIP,
+		// ConsulAddr: *consulAddr,
 		KnativeDns: knativeDNS,
-		Registry:   registry,
+		// Registry:   registry,
 	}
 
 	log.Info().Msg("Starting server...")

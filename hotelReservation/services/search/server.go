@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/dialer"
-	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/registry"
 	geo "github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/services/geo/proto"
 	rate "github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/services/rate/proto"
 	pb "github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/services/search/proto"
@@ -31,12 +30,12 @@ type Server struct {
 	rateClient rate.RateClient
 	uuid       string
 
-	Tracer     opentracing.Tracer
-	Port       int
-	IpAddr     string
-	ConsulAddr string
+	Tracer opentracing.Tracer
+	Port   int
+	IpAddr string
+	// ConsulAddr string
 	KnativeDns string
-	Registry   *registry.Client
+	// Registry   *registry.Client
 }
 
 // Run starts the server
@@ -91,7 +90,7 @@ func (s *Server) Run() error {
 
 // Shutdown cleans up any processes
 func (s *Server) Shutdown() {
-	s.Registry.Deregister(s.uuid)
+	// s.Registry.Deregister(s.uuid)
 }
 
 func (s *Server) initGeoClient(name string) error {

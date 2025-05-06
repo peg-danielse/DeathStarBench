@@ -6,7 +6,6 @@ import (
 	"net"
 	"time"
 
-	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/registry"
 	pb "github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/services/geo/proto"
 	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/tls"
 	"github.com/google/uuid"
@@ -33,7 +32,7 @@ type Server struct {
 	index *geoindex.ClusteringIndex
 	uuid  string
 
-	Registry    *registry.Client
+	// Registry    *registry.Client
 	Tracer      opentracing.Tracer
 	Port        int
 	IpAddr      string
@@ -90,7 +89,7 @@ func (s *Server) Run() error {
 
 // Shutdown cleans up any processes
 func (s *Server) Shutdown() {
-	s.Registry.Deregister(s.uuid)
+	// s.Registry.Deregister(s.uuid)
 }
 
 // Nearby returns all hotels within a given distance.

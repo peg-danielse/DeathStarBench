@@ -7,7 +7,6 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/registry"
 	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/services/review"
 	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/tracing"
 	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/tune"
@@ -53,13 +52,13 @@ func main() {
 	serv_port, _ := strconv.Atoi(result["ReviewPort"])
 	serv_ip := result["ReviewIP"]
 	log.Info().Msgf("Read target port: %v", serv_port)
-	log.Info().Msgf("Read consul address: %v", result["consulAddress"])
+	// log.Info().Msgf("Read consul address: %v", result["consulAddress"])
 	log.Info().Msgf("Read jaeger address: %v", result["jaegerAddress"])
 
 	var (
 		// port       = flag.Int("port", 8081, "The server port")
 		jaegeraddr = flag.String("jaegeraddr", result["jaegerAddress"], "Jaeger server addr")
-		consuladdr = flag.String("consuladdr", result["consulAddress"], "Consul address")
+		// consuladdr = flag.String("consuladdr", result["consulAddress"], "Consul address")
 	)
 	flag.Parse()
 
@@ -70,17 +69,18 @@ func main() {
 	}
 	log.Info().Msg("Jaeger agent initialized")
 
-	log.Info().Msgf("Initializing consul agent [host: %v]...", *consuladdr)
-	registry, err := registry.NewClient(*consuladdr)
-	if err != nil {
-		log.Panic().Msgf("Got error while initializing consul agent: %v", err)
-	}
-	log.Info().Msg("Consul agent initialized")
+	// log.Info().Msgf("Initializing consul agent [host: %v]...", *consuladdr)
+	// registry, err := registry.NewClient(*consuladdr)
+	// if err != nil {
+	// 	log.Panic().Msgf("Got error while initializing consul agent: %v", err)
+	// }
+	// log.Info().Msg("Consul agent initialized")
+	log.Info().Msg("Consul agent skipped")
 
 	srv := review.Server{
 		Tracer: tracer,
 		// Port:     *port,
-		Registry:    registry,
+		// Registry:    registry,
 		Port:        serv_port,
 		IpAddr:      serv_ip,
 		MongoClient: mongo_session,

@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/registry"
 	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/services/frontend"
 	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/tracing"
 	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/tune"
@@ -38,7 +37,7 @@ func main() {
 
 	var (
 		jaegerAddr = flag.String("jaegeraddr", result["jaegerAddress"], "Jaeger address")
-		consulAddr = flag.String("consuladdr", result["consulAddress"], "Consul address")
+		// consulAddr = flag.String("consuladdr", result["consulAddress"], "Consul address")
 	)
 	flag.Parse()
 	log.Info().Msgf("Initializing jaeger agent [service name: %v | host: %v]...", "frontend", *jaegerAddr)
@@ -48,20 +47,21 @@ func main() {
 	}
 	log.Info().Msg("Jaeger agent initialized")
 
-	log.Info().Msgf("Initializing consul agent [host: %v]...", *consulAddr)
-	registry, err := registry.NewClient(*consulAddr)
-	if err != nil {
-		log.Panic().Msgf("Got error while initializing consul agent: %v", err)
-	}
-	log.Info().Msg("Consul agent initialized")
+	// log.Info().Msgf("Initializing consul agent [host: %v]...", *consulAddr)
+	// registry, err := registry.NewClient(*consulAddr)
+	// if err != nil {
+	// log.Panic().Msgf("Got error while initializing consul agent: %v", err)
+	// }
+	// log.Info().Msg("Consul agent initialized")
+	log.Info().Msg("Consul agent skipped")
 
 	srv := &frontend.Server{
 		KnativeDns: knativeDNS,
-		Registry:   registry,
-		Tracer:     tracer,
-		IpAddr:     servIP,
-		ConsulAddr: *consulAddr,
-		Port:       servPort,
+		// Registry:   registry,
+		Tracer: tracer,
+		IpAddr: servIP,
+		// ConsulAddr: *consulAddr,
+		Port: servPort,
 	}
 
 	log.Info().Msg("Starting server...")

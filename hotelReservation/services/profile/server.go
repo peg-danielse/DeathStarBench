@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/bradfitz/gomemcache/memcache"
-	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/registry"
 	pb "github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/services/profile/proto"
 	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/tls"
 	"github.com/google/uuid"
@@ -34,8 +33,8 @@ type Server struct {
 	Port        int
 	IpAddr      string
 	MongoClient *mongo.Client
-	Registry    *registry.Client
-	MemcClient  *memcache.Client
+	// Registry    *registry.Client
+	MemcClient *memcache.Client
 }
 
 // Run starts the server
@@ -87,7 +86,7 @@ func (s *Server) Run() error {
 
 // Shutdown cleans up any processes
 func (s *Server) Shutdown() {
-	s.Registry.Deregister(s.uuid)
+	// s.Registry.Deregister(s.uuid)
 }
 
 // GetProfiles returns hotel profiles for requested IDs

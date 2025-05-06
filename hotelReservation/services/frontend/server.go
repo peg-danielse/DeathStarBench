@@ -9,7 +9,6 @@ import (
 	"strconv"
 
 	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/dialer"
-	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/registry"
 	attractions "github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/services/attractions/proto"
 	profile "github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/services/profile/proto"
 	recommendation "github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/services/recommendation/proto"
@@ -42,10 +41,10 @@ type Server struct {
 
 	KnativeDns string
 	IpAddr     string
-	ConsulAddr string
-	Port       int
-	Tracer     opentracing.Tracer
-	Registry   *registry.Client
+	// ConsulAddr string
+	Port   int
+	Tracer opentracing.Tracer
+	// Registry   *registry.Client
 }
 
 // Run the server
@@ -133,7 +132,7 @@ func (s *Server) initReviewClient(name string) error {
 	conn, err := dialer.Dial(
 		name,
 		dialer.WithTracer(s.Tracer),
-		dialer.WithBalancer(s.Registry.Client),
+		// dialer.WithBalancer(s.Registry.Client),
 	)
 	if err != nil {
 		return fmt.Errorf("dialer error: %v", err)
@@ -146,7 +145,7 @@ func (s *Server) initAttractionsClient(name string) error {
 	conn, err := dialer.Dial(
 		name,
 		dialer.WithTracer(s.Tracer),
-		dialer.WithBalancer(s.Registry.Client),
+		// dialer.WithBalancer(s.Registry.Client),
 	)
 	if err != nil {
 		return fmt.Errorf("dialer error: %v", err)

@@ -16,7 +16,6 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/registry"
 	pb "github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/services/review/proto"
 	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/tls"
 	"github.com/google/uuid"
@@ -41,9 +40,9 @@ type Server struct {
 	Port        int
 	IpAddr      string
 	MongoClient *mongo.Client
-	Registry    *registry.Client
-	MemcClient  *memcache.Client
-	uuid        string
+	// Registry    *registry.Client
+	MemcClient *memcache.Client
+	uuid       string
 }
 
 // Run starts the server
@@ -93,7 +92,7 @@ func (s *Server) Run() error {
 
 // Shutdown cleans up any processes
 func (s *Server) Shutdown() {
-	s.Registry.Deregister(s.uuid)
+	// s.Registry.Deregister(s.uuid)
 }
 
 type ReviewHelper struct {
