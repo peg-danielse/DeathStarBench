@@ -6,7 +6,6 @@ import (
 	"net"
 	"time"
 
-	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/registry"
 	pb "github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/services/user/proto"
 	"github.com/delimitrou/DeathStarBench/tree/master/hotelReservation/tls"
 	"github.com/google/uuid"
@@ -29,8 +28,8 @@ type Server struct {
 	users map[string]string
 	uuid  string
 
-	Tracer      opentracing.Tracer
-	Registry    *registry.Client
+	Tracer opentracing.Tracer
+	// Registry    *registry.Client
 	Port        int
 	IpAddr      string
 	MongoClient *mongo.Client
@@ -73,20 +72,20 @@ func (s *Server) Run() error {
 		log.Fatal().Msgf("failed to listen: %v", err)
 	}
 
-
-	err = s.Registry.Register(name, s.uuid, "http://srv-user.default.10.103.165.197.sslip.io", 80)
+	// err = s.Registry.Register(name, s.uuid, "http://srv-user.default.10.103.165.197.sslip.io", 80)
 	// err = s.Registry.Register(name, s.uuid, s.IpAddr, s.Port)
-	if err != nil {
-		return fmt.Errorf("failed register: %v", err)
-	}
-	log.Info().Msg("Successfully registered in consul")
+	// if err != nil {
+	// return fmt.Errorf("failed register: %v", err)
+	// }
+	// log.Info().Msg("Successfully registered in consul")
+	log.Info().Msg("skipped registering in consul")
 
 	return srv.Serve(lis)
 }
 
 // Shutdown cleans up any processes
 func (s *Server) Shutdown() {
-	s.Registry.Deregister(s.uuid)
+	// s.Registry.Deregister(s.uuid)
 }
 
 // CheckUser returns whether the username and password are correct.
