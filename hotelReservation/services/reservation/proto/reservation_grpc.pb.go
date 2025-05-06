@@ -9,7 +9,6 @@ package reservation
 import (
 	context "context"
 
-	"github.com/rs/zerolog/log"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -101,7 +100,6 @@ func _Reservation_MakeReservation_Handler(srv interface{}, ctx context.Context, 
 		return nil, err
 	}
 	if interceptor == nil {
-		log.Info().Msg("no interceptor")
 		return srv.(ReservationServer).MakeReservation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
