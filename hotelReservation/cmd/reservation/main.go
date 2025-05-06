@@ -57,6 +57,9 @@ func main() {
 	}
 	log.Info().Msg("Jaeger agent initialized")
 
+	sp := tracer.StartSpan("test-reservations-span")
+	sp.Finish()
+
 	// log.Info().Msgf("Initializing consul agent [host: %v]...", *consulAddr)
 	// registry, err := registry.NewClient(*consulAddr)
 	// if err != nil {
