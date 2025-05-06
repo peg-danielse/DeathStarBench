@@ -265,9 +265,17 @@ func (s *Server) searchHandler(w http.ResponseWriter, r *http.Request) {
 		locale = "en"
 	}
 
+	var ret []string
+	n := 300
+	if len(searchResp.HotelIds) > n {
+		ret = searchResp.HotelIds[:n]
+	} else {
+		ret = searchResp.HotelIds
+	}
+
 	reservationResp, err := s.reservationClient.CheckAvailability(ctx, &reservation.Request{
 		CustomerName: "",
-		HotelId:      searchResp.HotelIds[:100],
+		HotelId:      ret,
 		InDate:       inDate,
 		OutDate:      outDate,
 		RoomNumber:   1,
