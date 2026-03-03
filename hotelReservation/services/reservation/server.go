@@ -92,6 +92,9 @@ func (s *Server) Shutdown() {
 
 // MakeReservation makes a reservation based on given information
 func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Result, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "MakeReservation")
+	defer span.Finish()
+
 	res := new(pb.Result)
 	res.HotelId = make([]string, 0)
 
@@ -120,7 +123,10 @@ func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Resu
 
 		// first check memc
 		memc_key := hotelId + "_" + inDate.String()[0:10] + "_" + outdate
+		memcResSpan, _ := opentracing.StartSpanFromContext(ctx, "memcached_reservation_get")
+		memcResSpan.SetTag("span.kind", "client")
 		item, err := s.MemcClient.Get(memc_key)
+		memcResSpan.Finish()
 		if err == nil {
 			// memcached hit
 			count, _ = strconv.Atoi(string(item.Value))
@@ -132,12 +138,15 @@ func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Resu
 			log.Trace().Msgf("memcached miss")
 			var reserve []reservation
 
+			mongoResSpan, _ := opentracing.StartSpanFromContext(ctx, "mongodb_reservation_find")
+			mongoResSpan.SetTag("span.kind", "client")
 			filter := bson.D{{"hotelId", hotelId}, {"inDate", indate}, {"outDate", outdate}}
-			curr, err := resCollection.Find(context.TODO(), filter)
+			curr, err := resCollection.Find(ctx, filter)
 			if err != nil {
 				log.Error().Msgf("Failed get reservation data: ", err)
 			}
-			curr.All(context.TODO(), &reserve)
+			curr.All(ctx, &reserve)
+			mongoResSpan.Finish()
 			if err != nil {
 				log.Panic().Msgf("Tried to find hotelId [%v] from date [%v] to date [%v], but got error", hotelId, indate, outdate, err.Error())
 			}
@@ -155,7 +164,10 @@ func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Resu
 		// check capacity
 		// check memc capacity
 		memc_cap_key := hotelId + "_cap"
+		memcCapSpan, _ := opentracing.StartSpanFromContext(ctx, "memcached_capacity_get")
+		memcCapSpan.SetTag("span.kind", "client")
 		item, err = s.MemcClient.Get(memc_cap_key)
+		memcCapSpan.Finish()
 		hotel_cap := 0
 		if err == nil {
 			// memcached hit
@@ -163,8 +175,11 @@ func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Resu
 			log.Trace().Msgf("memcached hit %s = %d", memc_cap_key, hotel_cap)
 		} else if err == memcache.ErrCacheMiss {
 			// memcached miss
+			mongoCapSpan, _ := opentracing.StartSpanFromContext(ctx, "mongodb_capacity_get")
+			mongoCapSpan.SetTag("span.kind", "client")
 			var num number
-			err = numCollection.FindOne(context.TODO(), &bson.D{{"hotelId", hotelId}}).Decode(&num)
+			err = numCollection.FindOne(ctx, &bson.D{{"hotelId", hotelId}}).Decode(&num)
+			mongoCapSpan.Finish()
 			if err != nil {
 				log.Panic().Msgf("Tried to find hotelId [%v], but got error", hotelId, err.Error())
 			}
@@ -183,9 +198,12 @@ func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Resu
 	}
 
 	// only update reservation number cache after check succeeds
+	memcSetSpan, _ := opentracing.StartSpanFromContext(ctx, "memcached_reservation_set_multi")
+	memcSetSpan.SetTag("span.kind", "client")
 	for key, val := range memc_date_num_map {
 		s.MemcClient.Set(&memcache.Item{Key: key, Value: []byte(strconv.Itoa(val))})
 	}
+	memcSetSpan.Finish()
 
 	inDate, _ = time.Parse(
 		time.RFC3339,
@@ -193,11 +211,13 @@ func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Resu
 
 	indate = inDate.String()[0:10]
 
+	mongoInsertSpan, _ := opentracing.StartSpanFromContext(ctx, "mongodb_reservation_insert")
+	mongoInsertSpan.SetTag("span.kind", "client")
 	for inDate.Before(outDate) {
 		inDate = inDate.AddDate(0, 0, 1)
 		outdate := inDate.String()[0:10]
 		_, err := resCollection.InsertOne(
-			context.TODO(),
+			ctx,
 			reservation{
 				HotelId:      hotelId,
 				CustomerName: req.CustomerName,
@@ -207,10 +227,12 @@ func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Resu
 			},
 		)
 		if err != nil {
+			mongoInsertSpan.Finish()
 			log.Panic().Msgf("Tried to insert hotel [hotelId %v], but got error", hotelId, err.Error())
 		}
 		indate = outdate
 	}
+	mongoInsertSpan.Finish()
 
 	res.HotelId = append(res.HotelId, hotelId)
 
@@ -219,6 +241,9 @@ func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Resu
 
 // CheckAvailability checks if given information is available
 func (s *Server) CheckAvailability(ctx context.Context, req *pb.Request) (*pb.Result, error) {
+	span, ctx := opentracing.StartSpanFromContext(ctx, "CheckAvailability")
+	defer span.Finish()
+
 	res := new(pb.Result)
 	res.HotelId = make([]string, 0)
 
@@ -264,11 +289,11 @@ func (s *Server) CheckAvailability(ctx context.Context, req *pb.Request) (*pb.Re
 		var nums []number
 		capMongoSpan, _ := opentracing.StartSpanFromContext(ctx, "mongodb_capacity_get_multi_number")
 		capMongoSpan.SetTag("span.kind", "client")
-		curr, err := numCollection.Find(context.TODO(), bson.D{{"$in", queryMissKeys}})
+		curr, err := numCollection.Find(ctx, bson.D{{"$in", queryMissKeys}})
 		if err != nil {
 			log.Error().Msgf("Failed get reservation number data: ", err)
 		}
-		curr.All(context.TODO(), &nums)
+		curr.All(ctx, &nums)
 		if err != nil {
 			log.Error().Msgf("Failed get reservation number data: ", err)
 		}
@@ -361,13 +386,13 @@ func (s *Server) CheckAvailability(ctx context.Context, req *pb.Request) (*pb.Re
 					resCollection := s.MongoClient.Database("reservation-db").Collection("reservation")
 					filter := bson.D{{"hotelId", queryItem["hotelId"]}, {"inDate", queryItem["startDate"]}, {"outDate", queryItem["endDate"]}}
 
-					reserveMongoSpan, _ := opentracing.StartSpanFromContext(ctx, "mongodb_capacity_get_multi_number"+comm)
+					reserveMongoSpan, _ := opentracing.StartSpanFromContext(ctx, "mongodb_reservation_find")
 					reserveMongoSpan.SetTag("span.kind", "client")
-					curr, err := resCollection.Find(context.TODO(), filter)
+					curr, err := resCollection.Find(ctx, filter)
 					if err != nil {
 						log.Error().Msgf("Failed get reservation data: ", err)
 					}
-					curr.All(context.TODO(), &reserve)
+					curr.All(ctx, &reserve)
 					if err != nil {
 						log.Error().Msgf("Failed get reservation data: ", err)
 					}
