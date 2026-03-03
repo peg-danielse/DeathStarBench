@@ -4,6 +4,9 @@ metadata:
   name: srv-reservation
 spec:
   template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/min-scale: "5"
     spec:
       containers:
       - command:
