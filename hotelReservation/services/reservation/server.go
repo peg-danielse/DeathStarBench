@@ -147,17 +147,10 @@ func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Resu
 				log.Error().Err(err).Msg("Failed get reservation data")
 				return nil, err
 			}
-<<<<<<< HEAD
 			curr.All(ctx, &reserve)
 			mongoResSpan.Finish()
 			if err != nil {
 				log.Panic().Msgf("Tried to find hotelId [%v] from date [%v] to date [%v], but got error", hotelId, indate, outdate, err.Error())
-=======
-			if err = curr.All(ctx, &reserve); err != nil {
-				mongoResSpan.Finish()
-				log.Error().Err(err).Msg("Failed decode reservation data")
-				return nil, err
->>>>>>> e82fde0d1f9480c5c4864e22da5366e7f925173b
 			}
 			mongoResSpan.Finish()
 
@@ -305,16 +298,10 @@ func (s *Server) CheckAvailability(ctx context.Context, req *pb.Request) (*pb.Re
 			log.Error().Err(err).Msg("Failed get reservation number data")
 			return nil, err
 		}
-<<<<<<< HEAD
-		curr.All(ctx, &nums)
-		if err != nil {
-			log.Error().Msgf("Failed get reservation number data: ", err)
-=======
 		if err = curr.All(ctx, &nums); err != nil {
 			capMongoSpan.Finish()
 			log.Error().Err(err).Msg("Failed decode reservation number data")
 			return nil, err
->>>>>>> e82fde0d1f9480c5c4864e22da5366e7f925173b
 		}
 		capMongoSpan.Finish()
 		for _, num := range nums {
@@ -410,16 +397,10 @@ func (s *Server) CheckAvailability(ctx context.Context, req *pb.Request) (*pb.Re
 						log.Error().Err(err).Msg("Failed get reservation data")
 						return
 					}
-<<<<<<< HEAD
-					curr.All(ctx, &reserve)
-					if err != nil {
-						log.Error().Msgf("Failed get reservation data: ", err)
-=======
 					if err = curr.All(ctx, &reserve); err != nil {
 						reserveMongoSpan.Finish()
 						log.Error().Err(err).Msg("Failed decode reservation data")
 						return
->>>>>>> e82fde0d1f9480c5c4864e22da5366e7f925173b
 					}
 					reserveMongoSpan.Finish()
 					var count int
