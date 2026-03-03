@@ -123,6 +123,8 @@ func loadUsers(client *mongo.Client) map[string]string {
 
 	res := make(map[string]string)
 	for _, user := range users {
+
+		log.Info().Msgf("loaded user %s %s", user.Username, user.Password)
 		res[user.Username] = user.Password
 	}
 

@@ -21,8 +21,8 @@
   "ReserveMongoAddress": "mongodb-reservation:27017",
   "ReserveMemcAddress": "memcached-reserve:11211",
   "SearchPort": "8082",
-  "UserPort": "8086",
+  "UserPort": "8080",
   "UserMongoAddress": "mongodb-user:27017",
-  "KnativeDomainName": "default.10.103.165.197.sslip.io:80"
+  "KnativeDomainName": "default.145.100.135.11.sslip.io:80"
 }
 
