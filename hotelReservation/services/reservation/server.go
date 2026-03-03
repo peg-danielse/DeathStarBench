@@ -231,7 +231,8 @@ func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Resu
 		)
 		if err != nil {
 			mongoInsertSpan.Finish()
-			log.Panic().Msgf("Tried to insert hotel [hotelId %v], but got error: %v", hotelId, err)
+			log.Error().Err(err).Str("hotelId", hotelId).Msg("Tried to insert hotel but got error")
+			return nil, err
 		}
 		indate = outdate
 	}
