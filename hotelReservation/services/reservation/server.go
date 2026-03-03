@@ -143,13 +143,16 @@ func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Resu
 			filter := bson.D{{"hotelId", hotelId}, {"inDate", indate}, {"outDate", outdate}}
 			curr, err := resCollection.Find(ctx, filter)
 			if err != nil {
-				log.Error().Msgf("Failed get reservation data: ", err)
+				mongoResSpan.Finish()
+				log.Error().Err(err).Msg("Failed get reservation data")
+				return nil, err
 			}
-			curr.All(ctx, &reserve)
+			if err = curr.All(ctx, &reserve); err != nil {
+				mongoResSpan.Finish()
+				log.Error().Err(err).Msg("Failed decode reservation data")
+				return nil, err
+			}
 			mongoResSpan.Finish()
-			if err != nil {
-				log.Panic().Msgf("Tried to find hotelId [%v] from date [%v] to date [%v], but got error", hotelId, indate, outdate, err.Error())
-			}
 
 			for _, r := range reserve {
 				count += r.Number
@@ -181,7 +184,7 @@ func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Resu
 			err = numCollection.FindOne(ctx, &bson.D{{"hotelId", hotelId}}).Decode(&num)
 			mongoCapSpan.Finish()
 			if err != nil {
-				log.Panic().Msgf("Tried to find hotelId [%v], but got error", hotelId, err.Error())
+				log.Panic().Msgf("Tried to find hotelId [%v], but got error: %v", hotelId, err)
 			}
 			hotel_cap = int(num.Number)
 
@@ -228,7 +231,7 @@ func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Resu
 		)
 		if err != nil {
 			mongoInsertSpan.Finish()
-			log.Panic().Msgf("Tried to insert hotel [hotelId %v], but got error", hotelId, err.Error())
+			log.Panic().Msgf("Tried to insert hotel [hotelId %v], but got error: %v", hotelId, err)
 		}
 		indate = outdate
 	}
@@ -291,16 +294,16 @@ func (s *Server) CheckAvailability(ctx context.Context, req *pb.Request) (*pb.Re
 		capMongoSpan.SetTag("span.kind", "client")
 		curr, err := numCollection.Find(ctx, bson.D{{"$in", queryMissKeys}})
 		if err != nil {
-			log.Error().Msgf("Failed get reservation number data: ", err)
+			capMongoSpan.Finish()
+			log.Error().Err(err).Msg("Failed get reservation number data")
+			return nil, err
 		}
-		curr.All(ctx, &nums)
-		if err != nil {
-			log.Error().Msgf("Failed get reservation number data: ", err)
+		if err = curr.All(ctx, &nums); err != nil {
+			capMongoSpan.Finish()
+			log.Error().Err(err).Msg("Failed decode reservation number data")
+			return nil, err
 		}
 		capMongoSpan.Finish()
-		if err != nil {
-			log.Panic().Msgf("Tried to find hotelId [%v], but got error", misKeys, err.Error())
-		}
 		for _, num := range nums {
 			cacheCap[num.HotelId] = num.Number
 			// we don't care set successfully or not
@@ -390,21 +393,19 @@ func (s *Server) CheckAvailability(ctx context.Context, req *pb.Request) (*pb.Re
 					reserveMongoSpan.SetTag("span.kind", "client")
 					curr, err := resCollection.Find(ctx, filter)
 					if err != nil {
-						log.Error().Msgf("Failed get reservation data: ", err)
+						reserveMongoSpan.Finish()
+						log.Error().Err(err).Msg("Failed get reservation data")
+						return
 					}
-					curr.All(ctx, &reserve)
-					if err != nil {
-						log.Error().Msgf("Failed get reservation data: ", err)
+					if err = curr.All(ctx, &reserve); err != nil {
+						reserveMongoSpan.Finish()
+						log.Error().Err(err).Msg("Failed decode reservation data")
+						return
 					}
 					reserveMongoSpan.Finish()
-
-					if err != nil {
-						log.Panic().Msgf("Tried to find hotelId [%v] from date [%v] to date [%v], but got error",
-							queryItem["hotelId"], queryItem["startDate"], queryItem["endDate"], err.Error())
-					}
 					var count int
 					for _, r := range reserve {
-						log.Trace().Msgf("reservation check reservation number = %d", queryItem["hotelId"])
+						log.Trace().Msgf("reservation check reservation number = %s", queryItem["hotelId"])
 						count += r.Number
 					}
 					// update memcached
