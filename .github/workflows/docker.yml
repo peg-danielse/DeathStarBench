@@ -29,4 +29,4 @@ jobs:
         with:
           context: hotelReservation
           push: true
-          tags: ghcr.io/hotel-reservations:latest
+          tags: ghcr.io/peg-danielse/hotel-reservations:latest
