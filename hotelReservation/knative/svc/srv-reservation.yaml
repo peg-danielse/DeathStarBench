@@ -6,7 +6,7 @@ spec:
   template:
     metadata:
       annotations:
-        autoscaling.knative.dev/min-scale: "5"
+        autoscaling.knative.dev/min-scale: "1"
     spec:
       containers:
       - command:
@@ -14,7 +14,7 @@ spec:
         env:
         - name: DLOG
           value: DEBUG
-        image: pag3r/hotel-reservations:latest
+        image: ghcr.io/peg-danielse/hotel-reservations:latest
         name: hotel-reserv-reservation
         ports:
           - name: h2c
