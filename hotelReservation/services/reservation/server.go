@@ -147,10 +147,10 @@ func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Resu
 				log.Error().Err(err).Msg("Failed get reservation data")
 				return nil, err
 			}
-			curr.All(ctx, &reserve)
-			mongoResSpan.Finish()
-			if err != nil {
-				log.Panic().Msgf("Tried to find hotelId [%v] from date [%v] to date [%v], but got error", hotelId, indate, outdate, err.Error())
+			if err = curr.All(ctx, &reserve); err != nil {
+				mongoResSpan.Finish()
+				log.Error().Err(err).Msg("Failed decode reservation data")
+				return nil, err
 			}
 			mongoResSpan.Finish()
 
@@ -231,7 +231,8 @@ func (s *Server) MakeReservation(ctx context.Context, req *pb.Request) (*pb.Resu
 		)
 		if err != nil {
 			mongoInsertSpan.Finish()
-			log.Panic().Msgf("Tried to insert hotel [hotelId %v], but got error", hotelId, err.Error())
+			log.Error().Err(err).Str("hotelId", hotelId).Msg("Tried to insert hotel but got error")
+			return nil, err
 		}
 		indate = outdate
 	}
