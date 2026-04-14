@@ -23,6 +23,6 @@
   "SearchPort": "8082",
   "UserPort": "8080",
   "UserMongoAddress": "mongodb-user:27017",
-  "KnativeDomainName": "default.145.100.135.11.sslip.io:80"
+  "KnativeDomainName": "default.10.42.0.242.sslip.io:80"
 }
 
