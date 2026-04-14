@@ -45,5 +45,6 @@ spec:
               cpu: 100m
             limits:
               cpu: 1000m
+              memory: "2Gi"
       restartPolicy: Always
 status: {}
